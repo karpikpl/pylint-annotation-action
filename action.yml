@@ -1,18 +1,40 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Annotate Commit with Pylint Results'
+description: 'Adds file annotations to a commit based on Pylint results.'
+author: 'Piotr Karpala'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  lint-file:
+    description: 'Linting JSON results file from Pylint.'
     required: true
-    default: '1000'
+    default: 'pylint.json'
+  pylint-result-code:
+    description: 'Pylint result code to consider as an error.'
+    required: true
+    default: 0
+  head-sha:
+    description: 'SHA of the commit to annotate.'
+    required: true
+  repo-owner:
+    description: 'The repo owner.'
+    default: '${{ github.repository_owner }}'
+    required: true
+  repo-name:
+    description: 'The repo name.'
+    default: '${{ github.event.repository.name }}'
+    required: true
+  repo-token:
+    description:
+      'A GitHub token for API access. Defaults to {{ github.token }}.'
+    default: '${{ github.token }}'
+    required: true
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  result:
+    description:
+      'The result of the action. Success, Failure or information message.'
+
 
 runs:
   using: node20

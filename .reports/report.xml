@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="4" failures="2" errors="0" time="0.307">
+  <testsuite name="index" errors="0" failures="0" skipped="0" timestamp="2024-04-02T16:34:33" time="0.083" tests="1">
+    <testcase classname="index calls run when imported" name="index calls run when imported" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="action" errors="0" failures="2" skipped="0" timestamp="2024-04-02T16:34:33" time="0.195" tests="3">
+    <testcase classname="action posts pylint annotations" name="action posts pylint annotations" time="0.001">
+    </testcase>
+    <testcase classname="action sets a failed status" name="action sets a failed status" time="0.001">
+      <failure>Error: expect(jest.fn()).toHaveBeenNthCalledWith(n, ...expected)
+
+n: 1
+Expected: &quot;milliseconds not a number&quot;
+Received: &quot;Unexpected end of JSON input&quot;
+
+Number of calls: 1
+    at Object.toHaveBeenNthCalledWith (/home/pkarpala/projects/github/pylint-annotation-action/__tests__/main.test.js:113:27)</failure>
+    </testcase>
+    <testcase classname="action fails if no pylint file provided" name="action fails if no pylint file provided" time="0.001">
+      <failure>Error: expect(jest.fn()).toHaveBeenNthCalledWith(n, ...expected)
+
+n: 1
+Expected: &quot;Input required and not supplied: milliseconds&quot;
+Received: &quot;Input required and not supplied: lint-file&quot;
+
+Number of calls: 1
+    at Object.toHaveBeenNthCalledWith (/home/pkarpala/projects/github/pylint-annotation-action/__tests__/main.test.js:134:27)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
