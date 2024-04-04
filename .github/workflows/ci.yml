@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   test-javascript:
@@ -57,8 +58,16 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 1000
+          lint-file: './__tests__/pylintClean.json'
+          pylint-result-code: 0
+          head-sha: ${{ github.sha }}
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+        run: |
+          echo "result: ${{ steps.test-action.outputs.result }}"
+
+          # throw an error if the result is not success
+          if [ "${{ steps.test-action.outputs.result }}" != "Success" ]; then
+            exit 1
+          fi
