@@ -101,4 +101,4 @@ __tests__/runner/*
 .idea
 .vscode
 *.code-workspace
-.reports/report.xml
+.reports
