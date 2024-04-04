@@ -15,6 +15,7 @@ You need to add permissions for this tool.
 ```yaml
 permissions:
   contents: read
+  checks: write
 ```
 
 ```yaml

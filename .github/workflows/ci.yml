@@ -10,7 +10,8 @@ on:
 
 permissions:
   contents: read
-
+  checks: write
+  
 jobs:
   test-javascript:
     name: JavaScript Tests
