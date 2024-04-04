@@ -7,7 +7,6 @@ const fs = require('fs')
 const main = require('../src/main')
 
 // Mock the GitHub Actions core library
-const debugMock = jest.spyOn(core, 'debug').mockImplementation()
 const getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
 const setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
 const setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
@@ -15,12 +14,21 @@ const setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
 
-const pylintData = fs.readFileSync('./__tests__/pylint.json', 'utf8')
+const pylintData = fs.readFileSync(
+  './__tests__/pylint-unittesting.json',
+  'utf8'
+)
+const pylintCleanData = fs.readFileSync('./__tests__/pylintClean.json', 'utf8')
 const readFileSyncMock = jest
   .spyOn(fs, 'readFileSync')
-  .mockImplementation(name =>
-    name === 'pylint-unittesting.json' ? pylintData : ''
-  )
+  .mockImplementation(name => {
+    switch (name) {
+      case 'pylintClean.json':
+        return pylintData
+      case 'pylint-unittesting.json':
+        return pylintCleanData
+    }
+  })
 
 const createChecksMock = jest.fn().mockResolvedValue({
   status: 200,
@@ -95,25 +103,33 @@ describe('action', () => {
     expect(setOutputMock).toHaveBeenNthCalledWith(1, 'result', 'Success')
   })
 
-  it('sets a failed status', async () => {
+  it('posts no pylint annotations when code is OK', async () => {
     // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
-      switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
-        default:
-          return ''
-      }
-    })
+    mockInput({ pylint_rc: 0, lint_file: 'pylintClean.json' })
 
     await main.run()
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds not a number'
-    )
+    const check = createChecksMock.mock.calls[0][0]
+
+    expect(check.conclusion).toBe('success')
+    expect(createChecksMock).toHaveBeenCalled()
+    expect(getOctokitMock).toHaveBeenCalled()
+    expect(readFileSyncMock).toHaveBeenCalledWith('pylintClean.json', 'utf8')
+    expect(setOutputMock).toHaveBeenNthCalledWith(1, 'result', 'Success')
+  })
+
+  it('sets a failed status when github fails', async () => {
+    // Set the action's inputs as return values from core.getInput()
+    mockInput()
+    createChecksMock.mockRejectedValue(new Error('Failed to create check'))
+
+    await main.run()
+    expect(runMock).toHaveReturned()
+
+    // Verify that all of the core library functions were called correctly
+    expect(setFailedMock).toHaveBeenNthCalledWith(1, 'Failed to create check')
   })
 
   it('fails if no pylint file provided', async () => {

@@ -35,7 +35,6 @@ outputs:
     description:
       'The result of the action. Success, Failure or information message.'
 
-
 runs:
   using: node20
   main: dist/index.js
