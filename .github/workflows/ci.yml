@@ -64,4 +64,10 @@ jobs:
 
       - name: Print Output
         id: output
-        run: echo "result: ${{ steps.test-action.outputs.result }}"
+        run: |
+          echo "result: ${{ steps.test-action.outputs.result }}"
+
+          # throw an error if the result is not success
+          if [ "${{ steps.test-action.outputs.result }}" != "Success" ]; then
+            exit 1
+          fi
