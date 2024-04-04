@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="5" failures="0" errors="0" time="0.372">
-  <testsuite name="index" errors="0" failures="0" skipped="0" timestamp="2024-04-04T03:52:07" time="0.177" tests="1">
-    <testcase classname="index calls run when imported" name="index calls run when imported" time="0.004">
+<testsuites name="jest tests" tests="5" failures="0" errors="0" time="0.95">
+  <testsuite name="index" errors="0" failures="0" skipped="0" timestamp="2024-04-04T03:58:42" time="0.574" tests="1">
+    <testcase classname="index calls run when imported" name="index calls run when imported" time="0.055">
     </testcase>
   </testsuite>
-  <testsuite name="action" errors="0" failures="0" skipped="0" timestamp="2024-04-04T03:52:08" time="0.134" tests="4">
-    <testcase classname="action posts pylint annotations" name="action posts pylint annotations" time="0.002">
+  <testsuite name="action" errors="0" failures="0" skipped="0" timestamp="2024-04-04T03:58:43" time="0.289" tests="4">
+    <testcase classname="action posts pylint annotations" name="action posts pylint annotations" time="0.004">
     </testcase>
-    <testcase classname="action posts no pylint annotations when code is OK" name="action posts no pylint annotations when code is OK" time="0.009">
+    <testcase classname="action posts no pylint annotations when code is OK" name="action posts no pylint annotations when code is OK" time="0.002">
     </testcase>
-    <testcase classname="action sets a failed status when github fails" name="action sets a failed status when github fails" time="0.001">
+    <testcase classname="action sets a failed status when github fails" name="action sets a failed status when github fails" time="0.002">
     </testcase>
     <testcase classname="action fails if no pylint file provided" name="action fails if no pylint file provided" time="0.001">
     </testcase>
