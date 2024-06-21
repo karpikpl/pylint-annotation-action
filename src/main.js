@@ -51,13 +51,13 @@ async function run() {
     const octokit = github.getOctokit(token)
 
     let title = 'No issues have been found!'
-    if (conclusion !== 'failure') {
+    if (conclusion !== 'success') {
       title = 'Pylint has some suggestions!'
     }
 
     let summary = 'No issues have been found!'
-    if (conclusion !== 'failure') {
-      summary = 'Pylint has some suggestions!'
+    if (conclusion !== 'success') {
+      summary = 'Pylint has some suggestions!' + trimmedWarning
     }
 
     const resp = await octokit.rest.checks.create({
