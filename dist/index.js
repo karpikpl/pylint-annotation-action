@@ -29213,7 +29213,7 @@ async function run() {
     const lintingJson = fs.readFileSync(lintFile, 'utf8')
     const linting = JSON.parse(lintingJson)
 
-    const annotations = linting.messages.map(result => {
+    let annotations = linting.messages.map(result => {
       return {
         path: result.path,
         start_line: result.line,
