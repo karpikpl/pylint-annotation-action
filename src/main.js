@@ -34,9 +34,31 @@ async function run() {
     })
     const conclusion = pylintResultCode === 0 ? 'success' : 'failure'
 
+    const numAnnotations = annotations.length
+    core.info(`number of annotations: ${numAnnotations}`)
+    let trimmedWarning = ''
+    if (numAnnotations > 50) {
+      core.warning(
+        `Number of annotations is greater than 50, only the first 50 will be displayed.`
+      )
+      annotations = annotations.slice(0, 50)
+      trimmedWarning =
+        '\n:warning: Pylint annotations have been limited to 50 due to api limitations.'
+    }
+
     core.info(`conclusion of linting: ${conclusion}`)
 
     const octokit = github.getOctokit(token)
+
+    let title = 'No issues have been found!'
+    if (conclusion !== 'failure') {
+      title = 'Pylint has some suggestions!'
+    }
+
+    let summary = 'No issues have been found!'
+    if (conclusion !== 'failure') {
+      summary = 'Pylint has some suggestions!'
+    }
 
     const resp = await octokit.rest.checks.create({
       owner: repo_owner,
@@ -47,14 +69,8 @@ async function run() {
       conclusion,
       status: 'completed',
       output: {
-        title:
-          conclusion === 'success'
-            ? 'No issues have been found!'
-            : 'Pylint has some suggestions!',
-        summary:
-          conclusion === 'success'
-            ? 'No issues have been found!'
-            : 'Pylint has some suggestions!',
+        title: title,
+        summary: summary,
         annotations
       }
     })
