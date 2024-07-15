@@ -3,7 +3,7 @@
 [![GitHub Super-Linter](https://github.com/karpikpl/pylint-annotation-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/karpikpl/pylint-annotation-action/actions/workflows/ci.yml/badge.svg)
 
-GitHub action that annotates code with pylint linting results captured using
+GitHub Action that annotates code with pylint linting results captured using
 `pylint *.py --output-format=json2:pylint.json`.
 
 ## Usage
