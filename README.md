@@ -8,6 +8,8 @@ GitHub Action that annotates code with pylint linting results captured using
 
 ## Usage
 
+Recommended usage with [Pylint action](https://github.com/marketplace/actions/pylint-annotation-action)
+
 ### Basic
 
 You need to add permissions for this tool.
@@ -19,7 +21,7 @@ permissions:
 ```
 
 ```yaml
-uses: karpikpl/pylint-annotation-action@1.0.0
+uses: karpikpl/pylint-annotation-action@1.1.0
 with:
   lint-file: pylint.json
   pylint-result-code: 0
@@ -30,7 +32,7 @@ with:
 
 ### `head-sha`
 
-**Required** SHA of the commit to annotate.
+**Optional** SHA of the commit to annotate. Defaults to `github.sha` - current commit.
 
 ### `lint-file`
 
