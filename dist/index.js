@@ -29918,9 +29918,20 @@ async function run() {
     // read summary file
     const lintingJson = fs.readFileSync(lintFile, 'utf8')
     const linting = JSON.parse(lintingJson)
+    let trimmedWarning = ''
+
+    // limit the number of annotations to 50
+    if (linting.messages.length > 50) {
+      core.warning(
+        `Number of annotations is greater than 50, only the first 50 will be displayed.`
+      )
+      trimmedWarning =
+        '\n:warning: Pylint annotations have been limited to 50 due to api limitations.'
+      linting.messages = linting.messages.slice(0, 50)
+    }
 
     const annotations = linting.messages.map(result => {
-      return {
+      const annotation = {
         path: result.path,
         start_line: result.line,
         end_line: result.endLine || result.line,
@@ -29929,6 +29940,15 @@ async function run() {
         start_column: result.column,
         end_column: result.endColumn || result.column
       }
+
+      // Annotations only support start_column and end_column on the same line.
+      // Omit this parameter if start_line and end_line have different values. Column numbers start at 1.
+      if (annotation.start_line !== annotation.end_line) {
+        delete annotation.start_column
+        delete annotation.end_column
+      }
+
+      return annotation
     })
     const conclusion = pylintResultCode === 0 ? 'success' : 'failure'
 
@@ -29952,7 +29972,7 @@ async function run() {
         summary:
           conclusion === 'success'
             ? 'No issues have been found!'
-            : 'Pylint has some suggestions!',
+            : `Pylint has some suggestions!'${trimmedWarning}'`,
         annotations
       }
     })
