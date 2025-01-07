@@ -14,6 +14,7 @@ inputs:
     default: 0
   head-sha:
     description: 'SHA of the commit to annotate.'
+    default: '${{ github.sha }}'
     required: true
   repo-owner:
     description: 'The repo owner.'
