@@ -164,6 +164,21 @@
       "endColumn": null,
       "path": "app/clean.py",
       "absolutePath": "/home/pkarpala/projects/github/pr-changes/app/clean.py"
+    },
+    {
+      "type": "convention",
+      "symbol": "invalid-name",
+      "message": "This is a test of different columns in different lines",
+      "messageId": "C0103",
+      "confidence": "HIGH",
+      "module": "main",
+      "obj": "",
+      "line": 7,
+      "column": 0,
+      "endLine": 9,
+      "endColumn": 23,
+      "path": "app/main.py",
+      "absolutePath": "/home/pkarpala/projects/github/pr-changes/app/main.py"
     }
   ],
   "statistics": {

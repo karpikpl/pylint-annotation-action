@@ -24,9 +24,28 @@ const readFileSyncMock = jest
   .mockImplementation(name => {
     switch (name) {
       case 'pylintClean.json':
-        return pylintData
-      case 'pylint-unittesting.json':
         return pylintCleanData
+      case 'pylint-unittesting.json':
+        return pylintData
+      case 'large-pylint.json':
+        return JSON.stringify({
+          messages: Array.from({ length: 100 }, (_, i) => ({
+            type: 'convention',
+            symbol: 'missing-final-newline',
+            message: 'Final newline missing',
+            messageId: 'C0304',
+            confidence: 'UNDEFINED',
+            module: 'module',
+            obj: '',
+            line: i,
+            column: 0,
+            endLine: null,
+            endColumn: null,
+            path: 'app/module.py',
+            absolutePath:
+              '/home/pkarpala/projects/github/pr-changes/app/module.py'
+          }))
+        })
     }
   })
 
@@ -101,6 +120,43 @@ describe('action', () => {
       'utf8'
     )
     expect(setOutputMock).toHaveBeenNthCalledWith(1, 'result', 'Success')
+  })
+
+  it('posts max 50 pylint annotations', async () => {
+    // Set the action's inputs as return values from core.getInput()
+    mockInput({ lint_file: 'large-pylint.json' })
+
+    await main.run()
+    expect(runMock).toHaveReturned()
+
+    // Verify that all of the core library functions were called correctly
+    const check = createChecksMock.mock.calls[0][0]
+    const annotations = check.output.annotations
+
+    expect(annotations).toHaveLength(50)
+  })
+
+  it('posts valid pylint annotations', async () => {
+    // Set the action's inputs as return values from core.getInput()
+    mockInput({ lint_file: 'pylint-unittesting.json' })
+
+    await main.run()
+    expect(runMock).toHaveReturned()
+
+    // Verify that all of the core library functions were called correctly
+    const check = createChecksMock.mock.calls[0][0]
+    const annotations = check.output.annotations
+
+    expect(annotations).toHaveLength(12)
+
+    // Annotations only support start_column and end_column on the same line.
+    // Omit this parameter if start_line and end_line have different values. Column numbers start at 1.
+    const annotationsOnDifferentLines = annotations.filter(
+      annotation =>
+        annotation.start_line !== annotation.end_line &&
+        (annotation.start_column || annotation.end_column)
+    )
+    expect(annotationsOnDifferentLines).toHaveLength(0)
   })
 
   it('posts no pylint annotations when code is OK', async () => {
