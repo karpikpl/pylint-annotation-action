@@ -8,7 +8,8 @@ GitHub Action that annotates code with pylint linting results captured using
 
 ## Usage
 
-Recommended usage with [Pylint action](https://github.com/marketplace/actions/pylint-annotation-action)
+Recommended usage with
+[Pylint action](https://github.com/marketplace/actions/pylint-annotation-action)
 
 ### Basic
 
@@ -32,7 +33,8 @@ with:
 
 ### `head-sha`
 
-**Optional** SHA of the commit to annotate. Defaults to `github.sha` - current commit.
+**Optional** SHA of the commit to annotate. Defaults to `github.sha` - current
+commit.
 
 ### `lint-file`
 
