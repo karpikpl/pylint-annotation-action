@@ -30004,13 +30004,17 @@ async function run() {
         core.debug(
           `Trying to add a comment instead for repo:${repo_name} owner:${repo_owner} issue:${issueNumber}`
         )
-        const commentResp = await octokit.rest.issues.createComment({
-          owner: repo_owner,
-          repo: repo_name,
-          issue_number: issueNumber,
-          body: comment
-        })
-        core.debug(`response from comment create: ${commentResp.status}`)
+        try {
+          const commentResp = await octokit.rest.issues.createComment({
+            owner: repo_owner,
+            repo: repo_name,
+            issue_number: issueNumber,
+            body: comment
+          })
+          core.debug(`response from comment create: ${commentResp.status}`)
+        } catch (commentError) {
+          core.error(`Error creating comment: ${commentError}`)
+        }
       }
     }
 
