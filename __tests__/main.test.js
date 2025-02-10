@@ -201,7 +201,7 @@ describe('action', () => {
     expect(createCommentMock).toHaveBeenCalled()
   })
 
-  it('sets a failed status when github fails', async () => {
+  it('doesnt set failed status when github fails', async () => {
     // Set the action's inputs as return values from core.getInput()
     mockInput()
     createChecksMock.mockRejectedValue(new Error('Failed to create check'))
@@ -211,7 +211,7 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(1, 'Failed to create comment')
+    expect(setFailedMock).toHaveBeenCalledTimes(0)
   })
 
   it('fails if no pylint file provided', async () => {
