@@ -59,6 +59,7 @@ async function run() {
     const octokit = github.getOctokit(token)
 
     try {
+      core.debug(`Creating check for repo:${repo_name} owner:${repo_owner}`)
       const resp = await octokit.rest.checks.create({
         owner: repo_owner,
         repo: repo_name,
@@ -82,7 +83,6 @@ async function run() {
       core.debug(`response from checks create: ${resp.status}`)
     } catch (checkError) {
       core.error(`Error creating checks: ${checkError}`)
-      core.debug('Trying to add a comment instead')
 
       const comment = annotations
         .map(
@@ -95,6 +95,9 @@ async function run() {
         github.context?.payload?.pull_request?.number ||
         github.context?.issue?.number
       if (issueNumber) {
+        core.debug(
+          `Trying to add a comment instead for repo:${repo_name} owner:${repo_owner} issue:${issueNumber}`
+        )
         const commentResp = await octokit.rest.issues.createComment({
           owner: repo_owner,
           repo: repo_name,
