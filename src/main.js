@@ -58,27 +58,53 @@ async function run() {
 
     const octokit = github.getOctokit(token)
 
-    const resp = await octokit.rest.checks.create({
-      owner: repo_owner,
-      repo: repo_name,
-      name: 'pylint',
-      head_sha: headSha,
-      completed_at: new Date().toISOString(),
-      conclusion,
-      status: 'completed',
-      output: {
-        title:
-          conclusion === 'success'
-            ? 'No issues have been found!'
-            : 'Pylint has some suggestions!',
-        summary:
-          conclusion === 'success'
-            ? 'No issues have been found!'
-            : `Pylint has some suggestions!'${trimmedWarning}'`,
-        annotations
+    try {
+      const resp = await octokit.rest.checks.create({
+        owner: repo_owner,
+        repo: repo_name,
+        name: 'pylint',
+        head_sha: headSha,
+        completed_at: new Date().toISOString(),
+        conclusion,
+        status: 'completed',
+        output: {
+          title:
+            conclusion === 'success'
+              ? 'No issues have been found!'
+              : 'Pylint has some suggestions!',
+          summary:
+            conclusion === 'success'
+              ? 'No issues have been found!'
+              : `Pylint has some suggestions!'${trimmedWarning}'`,
+          annotations
+        }
+      })
+      core.debug(`response from checks create: ${resp.status}`)
+    } catch (checkError) {
+      core.error(`Error creating checks: ${checkError}`)
+      core.debug('Trying to add a comment instead')
+
+      const comment = annotations
+        .map(
+          annotation =>
+            `::${annotation.annotation_level} file=${annotation.path},line=${annotation.start_line},col=${annotation.start_column}::${annotation.message}`
+        )
+        .join('\n')
+
+      const issueNumber =
+        github.context?.payload?.pull_request?.number ||
+        github.context?.issue?.number
+      if (issueNumber) {
+        const commentResp = await octokit.rest.issues.createComment({
+          owner: repo_owner,
+          repo: repo_name,
+          issue_number: issueNumber,
+          body: comment
+        })
+        core.debug(`response from comment create: ${commentResp.status}`)
       }
-    })
-    core.debug(`response from checks create: ${resp.status}`)
+    }
+
     core.setOutput('result', 'Success')
   } catch (error) {
     // Fail the workflow run if an error occurs

@@ -55,6 +55,12 @@ const createChecksMock = jest.fn().mockResolvedValue({
   data: {}
 })
 
+const createCommentMock = jest.fn().mockResolvedValue({
+  status: 200,
+  headers: {},
+  data: {}
+})
+
 const getOctokitMock = jest
   .spyOn(github, 'getOctokit')
   .mockImplementation(() => {
@@ -62,6 +68,9 @@ const getOctokitMock = jest
       rest: {
         checks: {
           create: createChecksMock
+        },
+        issues: {
+          createComment: createCommentMock
         }
       }
     }
@@ -176,16 +185,33 @@ describe('action', () => {
     expect(setOutputMock).toHaveBeenNthCalledWith(1, 'result', 'Success')
   })
 
-  it('sets a failed status when github fails', async () => {
+  it('creates a comment when github checks API fails', async () => {
     // Set the action's inputs as return values from core.getInput()
     mockInput()
+    github.context = {
+      payload: { pull_request: { number: 123 } },
+      issue: { number: 123 }
+    }
     createChecksMock.mockRejectedValue(new Error('Failed to create check'))
 
     await main.run()
     expect(runMock).toHaveReturned()
 
+    // Verify that comment was created
+    expect(createCommentMock).toHaveBeenCalled()
+  })
+
+  it('sets a failed status when github fails', async () => {
+    // Set the action's inputs as return values from core.getInput()
+    mockInput()
+    createChecksMock.mockRejectedValue(new Error('Failed to create check'))
+    createCommentMock.mockRejectedValue(new Error('Failed to create comment'))
+
+    await main.run()
+    expect(runMock).toHaveReturned()
+
     // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(1, 'Failed to create check')
+    expect(setFailedMock).toHaveBeenNthCalledWith(1, 'Failed to create comment')
   })
 
   it('fails if no pylint file provided', async () => {
